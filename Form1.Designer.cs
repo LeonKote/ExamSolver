@@ -166,9 +166,13 @@
 			this.webBrowser1.TabIndex = 10;
 			this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
 			// 
+			// saveFileDialog1
+			// 
+			this.saveFileDialog1.Filter = "Solve files(*.slv)|*.slv";
+			// 
 			// openFileDialog1
 			// 
-			this.openFileDialog1.FileName = "openFileDialog1";
+			this.openFileDialog1.Filter = "Solve files(*.slv)|*.slv";
 			// 
 			// Form1
 			// 
