@@ -41,6 +41,7 @@
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			this.label1 = new System.Windows.Forms.Label();
 			this.webBrowser1 = new System.Windows.Forms.WebBrowser();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
@@ -164,6 +165,7 @@
 			this.textBox1.Multiline = true;
 			this.textBox1.Name = "textBox1";
 			this.textBox1.ReadOnly = true;
+			this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.textBox1.Size = new System.Drawing.Size(500, 150);
 			this.textBox1.TabIndex = 10;
 			// 
@@ -175,13 +177,22 @@
 			// 
 			this.openFileDialog1.Filter = "Solve files(*.slv)|*.slv";
 			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Location = new System.Drawing.Point(6, 153);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(54, 13);
+			this.label1.TabIndex = 11;
+			this.label1.Text = "Task: 0/0";
+			// 
 			// webBrowser1
 			// 
 			this.webBrowser1.Location = new System.Drawing.Point(0, 0);
 			this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
 			this.webBrowser1.Name = "webBrowser1";
 			this.webBrowser1.Size = new System.Drawing.Size(800, 450);
-			this.webBrowser1.TabIndex = 11;
+			this.webBrowser1.TabIndex = 12;
 			this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
 			// 
 			// Form1
@@ -190,6 +201,7 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.webBrowser1);
+			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textBox1);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
@@ -219,10 +231,11 @@
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.GroupBox groupBox3;
-		private System.Windows.Forms.WebBrowser webBrowser1;
+		private System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
-		private System.Windows.Forms.TextBox textBox1;
+		private System.Windows.Forms.WebBrowser webBrowser1;
 	}
 }
 

@@ -106,7 +106,8 @@ namespace ExamSolver
 							comboBox3.SelectedIndex++;
 							webBrowser1.Navigate(sectionLinks[comboBox3.SelectedIndex - 1]);
 						}
-						logger.Log(comboBox3.SelectedIndex, "💡 Not solved. The topic isn't in the database");
+						logger.Log(comboBox3.SelectedIndex, "💡 Not solved. This topic isn't in the database");
+						label1.Text = "Test: " + comboBox3.SelectedIndex + "/" + (comboBox3.Items.Count - 1);
 						return;
 					}
 
@@ -129,7 +130,8 @@ namespace ExamSolver
 						webBrowser1.Navigate(link.Children[0].GetAttribute("href"));
 						return;
 					}
-					logger.Log(comboBox3.SelectedIndex, "💡 Not saved. The topic isn't completed");
+					logger.Log(comboBox3.SelectedIndex, "💡 Not saved. This topic isn't completed");
+					label1.Text = "Test: " + comboBox3.SelectedIndex + "/" + (comboBox3.Items.Count - 1);
 
 					if (wholeSection)
 					{
@@ -310,6 +312,7 @@ namespace ExamSolver
 					}
 				}
 				logger.Log(comboBox3.SelectedIndex, "✅ Successfully saved");
+				label1.Text = "Test: " + comboBox3.SelectedIndex + "/" + (comboBox3.Items.Count - 1);
 
 				if (wholeSection)
 				{
@@ -522,6 +525,7 @@ namespace ExamSolver
 				{
 					logger.Log(comboBox3.SelectedIndex, "✅ Partially solved. Not sent");
 				}
+				label1.Text = "Test: " + comboBox3.SelectedIndex + "/" + (comboBox3.Items.Count - 1);
 
 				if (wholeSection)
 				{
@@ -667,6 +671,8 @@ namespace ExamSolver
 			comboBox3.SelectedIndex = 1;
 
 			webBrowser1.Navigate(sectionLinks[0]);
+
+			label1.Text = "Test: 0/" + (comboBox3.Items.Count - 1);
 		}
 
 		private void button4_Click(object sender, EventArgs e)
