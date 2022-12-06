@@ -38,9 +38,10 @@
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
-			this.webBrowser1 = new System.Windows.Forms.WebBrowser();
+			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			this.webBrowser1 = new System.Windows.Forms.WebBrowser();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
 			this.groupBox3.SuspendLayout();
@@ -157,14 +158,14 @@
 			this.groupBox3.TabStop = false;
 			this.groupBox3.Text = "Курс";
 			// 
-			// webBrowser1
+			// textBox1
 			// 
-			this.webBrowser1.Location = new System.Drawing.Point(0, 0);
-			this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
-			this.webBrowser1.Name = "webBrowser1";
-			this.webBrowser1.Size = new System.Drawing.Size(800, 450);
-			this.webBrowser1.TabIndex = 10;
-			this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
+			this.textBox1.Location = new System.Drawing.Point(301, 0);
+			this.textBox1.Multiline = true;
+			this.textBox1.Name = "textBox1";
+			this.textBox1.ReadOnly = true;
+			this.textBox1.Size = new System.Drawing.Size(500, 150);
+			this.textBox1.TabIndex = 10;
 			// 
 			// saveFileDialog1
 			// 
@@ -174,12 +175,22 @@
 			// 
 			this.openFileDialog1.Filter = "Solve files(*.slv)|*.slv";
 			// 
+			// webBrowser1
+			// 
+			this.webBrowser1.Location = new System.Drawing.Point(0, 0);
+			this.webBrowser1.MinimumSize = new System.Drawing.Size(20, 20);
+			this.webBrowser1.Name = "webBrowser1";
+			this.webBrowser1.Size = new System.Drawing.Size(800, 450);
+			this.webBrowser1.TabIndex = 11;
+			this.webBrowser1.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.webBrowser1_DocumentCompleted);
+			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.webBrowser1);
+			this.Controls.Add(this.textBox1);
 			this.Controls.Add(this.groupBox3);
 			this.Controls.Add(this.groupBox2);
 			this.Controls.Add(this.groupBox1);
@@ -192,6 +203,7 @@
 			this.groupBox2.ResumeLayout(false);
 			this.groupBox3.ResumeLayout(false);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -210,6 +222,7 @@
 		private System.Windows.Forms.WebBrowser webBrowser1;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
+		private System.Windows.Forms.TextBox textBox1;
 	}
 }
 

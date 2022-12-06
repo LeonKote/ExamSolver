@@ -19,6 +19,7 @@ namespace ExamSolver
 		bool wholeSection = false;
 
 		Course course = new Course();
+		Logger logger;
 
 		List<HtmlElement> courses = new List<HtmlElement>();
 		List<HtmlElement> sections = new List<HtmlElement>();
@@ -32,10 +33,13 @@ namespace ExamSolver
 			comboBox1.SelectedIndex = 0;
 			comboBox2.SelectedIndex = 0;
 			comboBox3.SelectedIndex = 0;
+
+			logger = new Logger(textBox1, comboBox3);
 		}
 
 		private void Form1_Load(object sender, EventArgs e)
 		{
+			logger.Log("Program", "Starting shell...");
 			webBrowser1.Navigate("https://exam1.urfu.ru/auth/saml/index.php");
 		}
 
@@ -66,6 +70,8 @@ namespace ExamSolver
 				{
 					logged = true;
 					webBrowser1.Visible = false;
+					logger.Log("Program", "Shell started");
+					logger.Log("Shell", "Successfully logged");
 				}
 
 				courses.Clear();
@@ -100,6 +106,7 @@ namespace ExamSolver
 							comboBox3.SelectedIndex++;
 							webBrowser1.Navigate(sectionLinks[comboBox3.SelectedIndex - 1]);
 						}
+						logger.Log(comboBox3.SelectedIndex, "💡 Not solved. The topic isn't in the database");
 						return;
 					}
 
@@ -122,6 +129,7 @@ namespace ExamSolver
 						webBrowser1.Navigate(link.Children[0].GetAttribute("href"));
 						return;
 					}
+					logger.Log(comboBox3.SelectedIndex, "💡 Not saved. The topic isn't completed");
 
 					if (wholeSection)
 					{
@@ -145,7 +153,6 @@ namespace ExamSolver
 					}
 					else
 					{
-						MessageBox.Show("Этот тест ещё не пройден", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
 						webBrowser1.Navigate("https://exam1.urfu.ru/");
 					}
 				}
@@ -302,6 +309,7 @@ namespace ExamSolver
 						course.Put(comboBox2.Text, comboBox3.Text, taskId, _answers);
 					}
 				}
+				logger.Log(comboBox3.SelectedIndex, "✅ Successfully saved");
 
 				if (wholeSection)
 				{
@@ -508,6 +516,11 @@ namespace ExamSolver
 						link.InvokeMember("click");
 						break;
 					}
+					logger.Log(comboBox3.SelectedIndex, "✅ Successfully solved");
+				}
+				else
+				{
+					logger.Log(comboBox3.SelectedIndex, "✅ Partially solved. Not sent");
 				}
 
 				if (wholeSection)
