@@ -60,11 +60,6 @@ namespace ExamSolver
 					comboBox1.SelectedIndex = 0;
 					comboBox2.SelectedIndex = 0;
 					comboBox3.SelectedIndex = 0;
-					comboBox1.Enabled = true;
-					button1.Enabled = true;
-					button2.Enabled = true;
-					button3.Enabled = true;
-					button4.Enabled = true;
 				}
 				else
 				{
@@ -90,6 +85,7 @@ namespace ExamSolver
 					courses.Add(link);
 					comboBox1.Items.Add(link.Children[0].Children[0].InnerText);
 				}
+				comboBox1.Enabled = true;
 			}
 			else if (Utils.Match(url, "https://exam1.urfu.ru/mod/quiz/view.php"))
 			{
@@ -550,13 +546,20 @@ namespace ExamSolver
 		{
 			if (comboBox1.SelectedIndex == 0) return;
 
-			int idx = comboBox1.SelectedIndex - 1;
+			comboBox2.Enabled = false;
+			comboBox3.Enabled = false;
+			button3.Enabled = false;
+			button4.Enabled = false;
+			button1.Enabled = false;
+			button2.Enabled = false;
 
 			sections.Clear();
 			comboBox2.Items.Clear();
-			comboBox2.Enabled = false;
+			comboBox3.SelectedIndex = 0;
 
 			comboBox2.Items.Add("Выберите раздел");
+
+			int idx = comboBox1.SelectedIndex - 1;
 
 			if (courses[idx].Children.Count == 1)
 			{
@@ -574,19 +577,24 @@ namespace ExamSolver
 			}
 			comboBox2.SelectedIndex = 0;
 			comboBox2.Enabled = true;
+			button3.Enabled = true;
+			button4.Enabled = true;
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			if (comboBox2.SelectedIndex == 0) return;
 
-			int idx = comboBox2.SelectedIndex - 1;
+			comboBox3.Enabled = false;
+			button1.Enabled = false;
+			button2.Enabled = false;
 
 			topics.Clear();
 			comboBox3.Items.Clear();
-			comboBox3.Enabled = false;
 
 			comboBox3.Items.Add("Выберите тему");
+
+			int idx = comboBox2.SelectedIndex - 1;
 
 			if (sections[idx].Children.Count == 1)
 			{
@@ -601,6 +609,8 @@ namespace ExamSolver
 			}
 			comboBox3.SelectedIndex = 0;
 			comboBox3.Enabled = true;
+			button1.Enabled = true;
+			button2.Enabled = true;
 		}
 
 		private void button1_Click(object sender, EventArgs e)
@@ -710,6 +720,8 @@ namespace ExamSolver
 			comboBox3.SelectedIndex = 1;
 
 			webBrowser1.Navigate(sectionLinks[0]);
+
+			label1.Text = "Test: 0/" + (comboBox3.Items.Count - 1);
 		}
 	}
 }

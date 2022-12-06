@@ -51,6 +51,7 @@
 			// comboBox1
 			// 
 			this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.comboBox1.Enabled = false;
 			this.comboBox1.FormattingEnabled = true;
 			this.comboBox1.Items.AddRange(new object[] {
             "Выберите курс"});
@@ -87,6 +88,7 @@
 			// 
 			// button1
 			// 
+			this.button1.Enabled = false;
 			this.button1.Location = new System.Drawing.Point(133, 17);
 			this.button1.Name = "button1";
 			this.button1.Size = new System.Drawing.Size(75, 23);
@@ -97,6 +99,7 @@
 			// 
 			// button2
 			// 
+			this.button2.Enabled = false;
 			this.button2.Location = new System.Drawing.Point(214, 17);
 			this.button2.Name = "button2";
 			this.button2.Size = new System.Drawing.Size(75, 23);
@@ -107,6 +110,7 @@
 			// 
 			// button3
 			// 
+			this.button3.Enabled = false;
 			this.button3.Location = new System.Drawing.Point(133, 17);
 			this.button3.Name = "button3";
 			this.button3.Size = new System.Drawing.Size(75, 23);
@@ -117,6 +121,7 @@
 			// 
 			// button4
 			// 
+			this.button4.Enabled = false;
 			this.button4.Location = new System.Drawing.Point(214, 17);
 			this.button4.Name = "button4";
 			this.button4.Size = new System.Drawing.Size(75, 23);
