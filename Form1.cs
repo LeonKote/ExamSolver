@@ -723,5 +723,15 @@ namespace ExamSolver
 
 			label1.Text = "Test: 0/" + (comboBox3.Items.Count - 1);
 		}
+
+		private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			System.Diagnostics.Process.Start("https://vk.com/id217626683");
+		}
+
+		private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+		{
+			System.Diagnostics.Process.Start("https://vk.com/id253591799");
+		}
 	}
 }
