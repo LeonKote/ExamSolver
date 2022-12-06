@@ -658,6 +658,7 @@ namespace ExamSolver
 
 			wholeSection = true;
 
+			sectionLinks.Clear();
 			foreach (HtmlElement topic in topics)
 			{
 				sectionLinks.Add(topic.Children[0].Children[0].GetAttribute("href"));
@@ -694,6 +695,7 @@ namespace ExamSolver
 			solve = true;
 			wholeSection = true;
 
+			sectionLinks.Clear();
 			foreach (HtmlElement topic in topics)
 			{
 				sectionLinks.Add(topic.Children[0].Children[0].GetAttribute("href"));
