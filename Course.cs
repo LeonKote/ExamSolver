@@ -47,7 +47,8 @@ namespace ExamSolver
 
 		public bool Contains(string sectionName, string topicName)
 		{
-			return Sections.ContainsKey(sectionName) && Sections[sectionName].ContainsKey(topicName);
+			return Sections.ContainsKey(sectionName) && Sections[sectionName].ContainsKey(topicName) &&
+				Sections[sectionName][topicName].Values.Any(x => x.Count != 0);
 		}
 	}
 }

@@ -188,10 +188,11 @@ namespace ExamSolver
 						{
 							text = childs[2].InnerText.Substring(18);
 						}
-						else
+						else if (childs.Count > 1 && childs[1].GetAttribute("className") == "rightanswer")
 						{
 							text = childs[1].InnerText.Substring(18);
 						}
+						else continue;
 
 						answers = Regex.Split(text, @", (?=\d+\.)").ToList();
 
@@ -251,6 +252,8 @@ namespace ExamSolver
 							int endIdx = answer.IndexOf("Баллов") - 2;
 
 							if (endIdx == -3) endIdx = answer.Length;
+
+							if (startIdx > endIdx) break;
 
 							_answers.Add(count.ToString(), answer.Substring(startIdx, endIdx - startIdx));
 							count++;
