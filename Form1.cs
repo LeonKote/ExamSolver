@@ -24,7 +24,7 @@ namespace ExamSolver
 		List<HtmlElement> courses = new List<HtmlElement>();
 		List<HtmlElement> sections = new List<HtmlElement>();
 		List<HtmlElement> topics = new List<HtmlElement>();
-		
+
 		List<string> sectionLinks = new List<string>();
 
 		public Form1()
@@ -263,9 +263,8 @@ namespace ExamSolver
 							if (child.Children[i].TagName != "DIV" ||
 								child.Children[i].GetAttribute("className") != "answer") continue;
 
-							string key = child.Children[i - 1].InnerText == null ? child.Children[i - 2].InnerText : child.Children[i - 1].InnerText;
-
-							_answers.Add(key, child.Children[i + 1].InnerText.Substring(42));
+							_answers.Add(count.ToString(), child.Children[i + 1].InnerText.Substring(42));
+							count++;
 						}
 						course.Put(comboBox2.Text, comboBox3.Text, taskId, _answers);
 					}
@@ -302,7 +301,7 @@ namespace ExamSolver
 						var _answers = new Dictionary<string, string>();
 
 						string[] answers = link.Children[1].Children[1].Children[1].Children[1].InnerText.Substring(19).Split(new string[] { ", " }, StringSplitOptions.None);
-						
+
 						for (int i = 0; i < answers.Length; i++)
 						{
 							_answers.Add(i.ToString(), answers[i]);
@@ -394,7 +393,7 @@ namespace ExamSolver
 				{
 					var child = task.Children[1].Children[0];
 
-					string[] answers = course.Sections[comboBox2.Text][comboBox3.Text][taskId].Where(x => int.TryParse(x.Key, out _)).OrderBy(x => int.Parse(x.Key)).Select(x => x.Value).ToArray();
+					string[] answers = course.Sections[comboBox2.Text][comboBox3.Text][taskId].OrderBy(x => int.Parse(x.Key)).Select(x => x.Value).ToArray();
 
 					HtmlElementCollection _childs = child.GetElementsByTagName("span");
 
@@ -426,16 +425,14 @@ namespace ExamSolver
 						if (child.Children[i].TagName != "DIV" ||
 							child.Children[i].GetAttribute("className") != "answer") continue;
 
-						string key = child.Children[i - 1].InnerText == null ? child.Children[i - 2].InnerText : child.Children[i - 1].InnerText;
-
 						var options = child.Children[i].Children;
-
-						string answer = course.Sections[comboBox2.Text][comboBox3.Text][taskId][key];
 
 						foreach (HtmlElement option in options)
 						{
-							if (option.Children[1].InnerText != answer) continue;
+							if (option.Children[1].InnerText != answers[count]) continue;
 							option.Children[0].InvokeMember("click");
+							count++;
+							break;
 						}
 					}
 				}
