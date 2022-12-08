@@ -93,6 +93,9 @@ namespace ExamSolver
 				{
 					if (wholeSection && !course.Contains(comboBox2.Text, comboBox3.Text))
 					{
+						logger.Log(comboBox3.SelectedIndex, "💡 Not solved. This topic isn't in the database");
+						label1.Text = "Test: " + comboBox3.SelectedIndex + "/" + (comboBox3.Items.Count - 1);
+
 						if (comboBox3.SelectedIndex == comboBox3.Items.Count - 1)
 						{
 							webBrowser1.Navigate("https://exam1.urfu.ru/");
@@ -102,8 +105,6 @@ namespace ExamSolver
 							comboBox3.SelectedIndex++;
 							webBrowser1.Navigate(sectionLinks[comboBox3.SelectedIndex - 1]);
 						}
-						logger.Log(comboBox3.SelectedIndex, "💡 Not solved. This topic isn't in the database");
-						label1.Text = "Test: " + comboBox3.SelectedIndex + "/" + (comboBox3.Items.Count - 1);
 						return;
 					}
 
