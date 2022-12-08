@@ -194,7 +194,12 @@ namespace ExamSolver
 						}
 						else continue;
 
-						answers = Regex.Split(text, @", (?=\d+\.)").ToList();
+						answers = text.Split(new string[] { ".,", "!,", "?," }, StringSplitOptions.None).ToList();
+
+						if (answers.Count != count)
+						{
+							answers = Regex.Split(text, @", (?=\d+\.)").ToList();
+						}
 
 						if (answers.Count != count)
 						{
@@ -208,12 +213,6 @@ namespace ExamSolver
 								answers.RemoveAt(i);
 								i--;
 							}
-						}
-
-						if (answers.Count != count)
-						{
-							answers.Clear();
-							answers = text.Split(new string[] { ".,", "!,", "?," }, StringSplitOptions.None).ToList();
 						}
 
 						if (answers.Count != count)
