@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,6 +18,8 @@ namespace ExamSolver
 		bool logged = false;
 		bool solve = false;
 		bool wholeSection = false;
+		bool warning = false;
+		bool firstTime = false;
 
 		Course course = new Course();
 		Logger logger;
@@ -26,6 +29,8 @@ namespace ExamSolver
 		List<HtmlElement> topics = new List<HtmlElement>();
 
 		List<string> sectionLinks = new List<string>();
+
+		Random rand = new Random();
 
 		public Form1()
 		{
@@ -53,6 +58,8 @@ namespace ExamSolver
 				{
 					solve = false;
 					wholeSection = false;
+
+					checkBox1.Enabled = true;
 
 					comboBox1.Items.Clear();
 					comboBox1.Items.Add("Выберите курс");
@@ -353,6 +360,12 @@ namespace ExamSolver
 				string taskId = Utils.GetId(task.Id);
 				string className = task.GetAttribute("className");
 
+				if (checkBox1.Checked && !firstTime)
+				{
+					Thread.Sleep(rand.Next((int)numericUpDown2.Value * 60000, ((int)numericUpDown2.Value + 1) * 60000));
+					firstTime = true;
+				}
+
 				if (Utils.Match(className, "que match deferredfeedback"))
 				{
 					var childs = task.Children[1].Children[0].Children[3].Children[0].Children[0].Children;
@@ -521,6 +534,7 @@ namespace ExamSolver
 				{
 					logger.Log(comboBox3.SelectedIndex, "✅ Partially solved. Not sent");
 				}
+				firstTime = false;
 				label1.Text = "Test: " + comboBox3.SelectedIndex + "/" + (comboBox3.Items.Count - 1);
 
 				if (wholeSection)
@@ -544,20 +558,16 @@ namespace ExamSolver
 
 		private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (comboBox1.SelectedIndex == 0) return;
-
 			comboBox2.Enabled = false;
-			comboBox3.Enabled = false;
-			button3.Enabled = false;
-			button4.Enabled = false;
-			button1.Enabled = false;
-			button2.Enabled = false;
 
 			sections.Clear();
 			comboBox2.Items.Clear();
 			comboBox3.SelectedIndex = 0;
 
 			comboBox2.Items.Add("Выберите раздел");
+			comboBox2.SelectedIndex = 0;
+
+			if (comboBox1.SelectedIndex == 0) return;
 
 			int idx = comboBox1.SelectedIndex - 1;
 
@@ -575,24 +585,29 @@ namespace ExamSolver
 				sections.Add(link);
 				comboBox2.Items.Add(text);
 			}
-			comboBox2.SelectedIndex = 0;
 			comboBox2.Enabled = true;
-			button3.Enabled = true;
-			button4.Enabled = true;
 		}
 
 		private void comboBox2_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			if (comboBox2.SelectedIndex == 0) return;
-
 			comboBox3.Enabled = false;
-			button1.Enabled = false;
-			button2.Enabled = false;
+			label2.Enabled = false;
+			numericUpDown1.Enabled = false;
 
 			topics.Clear();
 			comboBox3.Items.Clear();
 
 			comboBox3.Items.Add("Выберите тему");
+			comboBox3.SelectedIndex = 0;
+
+			if (comboBox2.SelectedIndex == 0)
+			{
+				button3.Enabled = false;
+				button4.Enabled = false;
+				return;
+			}
+			button3.Enabled = true;
+			button4.Enabled = true;
 
 			int idx = comboBox2.SelectedIndex - 1;
 
@@ -607,8 +622,20 @@ namespace ExamSolver
 				topics.Add(link);
 				comboBox3.Items.Add(link.Children[0].Children[0].InnerText);
 			}
-			comboBox3.SelectedIndex = 0;
 			comboBox3.Enabled = true;
+			label2.Enabled = true;
+			numericUpDown1.Enabled = true;
+			numericUpDown1.Maximum = comboBox3.Items.Count - 1;
+		}
+
+		private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if (comboBox3.SelectedIndex == 0)
+			{
+				button1.Enabled = false;
+				button2.Enabled = false;
+				return;
+			}
 			button1.Enabled = true;
 			button2.Enabled = true;
 		}
@@ -622,6 +649,10 @@ namespace ExamSolver
 			button2.Enabled = false;
 			button3.Enabled = false;
 			button4.Enabled = false;
+			label2.Enabled = false;
+			numericUpDown1.Enabled = false;
+			checkBox1.Enabled = false;
+			numericUpDown2.Enabled = false;
 
 			int idx = comboBox3.SelectedIndex - 1;
 
@@ -652,6 +683,10 @@ namespace ExamSolver
 			button2.Enabled = false;
 			button3.Enabled = false;
 			button4.Enabled = false;
+			label2.Enabled = false;
+			numericUpDown1.Enabled = false;
+			checkBox1.Enabled = false;
+			numericUpDown2.Enabled = false;
 
 			solve = true;
 
@@ -669,6 +704,10 @@ namespace ExamSolver
 			button2.Enabled = false;
 			button3.Enabled = false;
 			button4.Enabled = false;
+			label2.Enabled = false;
+			numericUpDown1.Enabled = false;
+			checkBox1.Enabled = false;
+			numericUpDown2.Enabled = false;
 
 			wholeSection = true;
 
@@ -707,6 +746,10 @@ namespace ExamSolver
 			button2.Enabled = false;
 			button3.Enabled = false;
 			button4.Enabled = false;
+			label2.Enabled = false;
+			numericUpDown1.Enabled = false;
+			checkBox1.Enabled = false;
+			numericUpDown2.Enabled = false;
 
 			solve = true;
 			wholeSection = true;
@@ -717,9 +760,9 @@ namespace ExamSolver
 				sectionLinks.Add(topic.Children[0].Children[0].GetAttribute("href"));
 			}
 
-			comboBox3.SelectedIndex = 1;
+			comboBox3.SelectedIndex = (int)numericUpDown1.Value;
 
-			webBrowser1.Navigate(sectionLinks[0]);
+			webBrowser1.Navigate(sectionLinks[(int)numericUpDown1.Value - 1]);
 
 			label1.Text = "Test: 0/" + (comboBox3.Items.Count - 1);
 		}
@@ -732,6 +775,20 @@ namespace ExamSolver
 		private void linkLabel2_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
 		{
 			System.Diagnostics.Process.Start("https://vk.com/id253591799");
+		}
+
+		private void checkBox1_CheckedChanged(object sender, EventArgs e)
+		{
+			numericUpDown2.Enabled = checkBox1.Checked;
+
+			if (warning || !checkBox1.Checked) return;
+
+			if (MessageBox.Show("Интервал работает, но происходит посредством замораживания процесса.\nВо время заморозки окно не будет отвечать на команды пользователя.", "ЭКСПЕРИМЕНТАЛЬНАЯ ФИЧА", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning) == DialogResult.Cancel)
+			{
+				checkBox1.Checked = false;
+				return;
+			}
+			warning = true;
 		}
 	}
 }

@@ -37,17 +37,23 @@
 			this.button4 = new System.Windows.Forms.Button();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
+			this.label2 = new System.Windows.Forms.Label();
+			this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
 			this.groupBox3 = new System.Windows.Forms.GroupBox();
 			this.textBox1 = new System.Windows.Forms.TextBox();
 			this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
 			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
 			this.label1 = new System.Windows.Forms.Label();
+			this.checkBox1 = new System.Windows.Forms.CheckBox();
+			this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
 			this.webBrowser1 = new System.Windows.Forms.WebBrowser();
 			this.linkLabel1 = new System.Windows.Forms.LinkLabel();
 			this.linkLabel2 = new System.Windows.Forms.LinkLabel();
 			this.groupBox1.SuspendLayout();
 			this.groupBox2.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
 			this.groupBox3.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// comboBox1
@@ -87,6 +93,7 @@
 			this.comboBox3.Name = "comboBox3";
 			this.comboBox3.Size = new System.Drawing.Size(121, 21);
 			this.comboBox3.TabIndex = 2;
+			this.comboBox3.SelectedIndexChanged += new System.EventHandler(this.comboBox3_SelectedIndexChanged);
 			// 
 			// button1
 			// 
@@ -137,7 +144,7 @@
 			this.groupBox1.Controls.Add(this.comboBox3);
 			this.groupBox1.Controls.Add(this.button1);
 			this.groupBox1.Controls.Add(this.button2);
-			this.groupBox1.Location = new System.Drawing.Point(0, 100);
+			this.groupBox1.Location = new System.Drawing.Point(0, 125);
 			this.groupBox1.Name = "groupBox1";
 			this.groupBox1.Size = new System.Drawing.Size(295, 50);
 			this.groupBox1.TabIndex = 7;
@@ -146,15 +153,50 @@
 			// 
 			// groupBox2
 			// 
+			this.groupBox2.Controls.Add(this.label2);
 			this.groupBox2.Controls.Add(this.comboBox2);
+			this.groupBox2.Controls.Add(this.numericUpDown1);
 			this.groupBox2.Controls.Add(this.button3);
 			this.groupBox2.Controls.Add(this.button4);
 			this.groupBox2.Location = new System.Drawing.Point(0, 50);
 			this.groupBox2.Name = "groupBox2";
-			this.groupBox2.Size = new System.Drawing.Size(295, 50);
+			this.groupBox2.Size = new System.Drawing.Size(295, 75);
 			this.groupBox2.TabIndex = 8;
 			this.groupBox2.TabStop = false;
 			this.groupBox2.Text = "Раздел";
+			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Enabled = false;
+			this.label2.Location = new System.Drawing.Point(30, 48);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(97, 13);
+			this.label2.TabIndex = 7;
+			this.label2.Text = "Начать с теста №";
+			// 
+			// numericUpDown1
+			// 
+			this.numericUpDown1.Enabled = false;
+			this.numericUpDown1.Location = new System.Drawing.Point(133, 46);
+			this.numericUpDown1.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+			this.numericUpDown1.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.numericUpDown1.Name = "numericUpDown1";
+			this.numericUpDown1.Size = new System.Drawing.Size(35, 20);
+			this.numericUpDown1.TabIndex = 8;
+			this.numericUpDown1.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
 			// 
 			// groupBox3
 			// 
@@ -187,11 +229,44 @@
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(6, 153);
+			this.label1.Location = new System.Drawing.Point(301, 153);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(54, 13);
 			this.label1.TabIndex = 11;
 			this.label1.Text = "Task: 0/0";
+			// 
+			// checkBox1
+			// 
+			this.checkBox1.AutoSize = true;
+			this.checkBox1.Location = new System.Drawing.Point(11, 182);
+			this.checkBox1.Name = "checkBox1";
+			this.checkBox1.Size = new System.Drawing.Size(119, 17);
+			this.checkBox1.TabIndex = 9;
+			this.checkBox1.Text = "Интервал +- 1 мин";
+			this.checkBox1.UseVisualStyleBackColor = true;
+			this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+			// 
+			// numericUpDown2
+			// 
+			this.numericUpDown2.Location = new System.Drawing.Point(133, 181);
+			this.numericUpDown2.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+			this.numericUpDown2.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.numericUpDown2.Name = "numericUpDown2";
+			this.numericUpDown2.Size = new System.Drawing.Size(35, 20);
+			this.numericUpDown2.TabIndex = 10;
+			this.numericUpDown2.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
 			// 
 			// webBrowser1
 			// 
@@ -232,6 +307,8 @@
 			this.Controls.Add(this.linkLabel2);
 			this.Controls.Add(this.linkLabel1);
 			this.Controls.Add(this.webBrowser1);
+			this.Controls.Add(this.numericUpDown2);
+			this.Controls.Add(this.checkBox1);
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textBox1);
 			this.Controls.Add(this.groupBox3);
@@ -244,7 +321,10 @@
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox2.ResumeLayout(false);
+			this.groupBox2.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
 			this.groupBox3.ResumeLayout(false);
+			((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -263,9 +343,13 @@
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.GroupBox groupBox3;
 		private System.Windows.Forms.TextBox textBox1;
-		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog1;
 		private System.Windows.Forms.OpenFileDialog openFileDialog1;
+		private System.Windows.Forms.Label label1;
+		private System.Windows.Forms.Label label2;
+		private System.Windows.Forms.NumericUpDown numericUpDown1;
+		private System.Windows.Forms.CheckBox checkBox1;
+		private System.Windows.Forms.NumericUpDown numericUpDown2;
 		private System.Windows.Forms.WebBrowser webBrowser1;
 		private System.Windows.Forms.LinkLabel linkLabel1;
 		private System.Windows.Forms.LinkLabel linkLabel2;
