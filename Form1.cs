@@ -167,39 +167,39 @@ namespace ExamSolver
 			else if (Utils.Match(url, "https://exam1.urfu.ru/mod/quiz/review.php"))
 			{
 				HtmlElementCollection links = webBrowser1.Document.GetElementsByTagName("form");
-				HtmlElement found = null;
+				HtmlElementCollection found = null;
 
 				foreach (HtmlElement link in links)
 				{
 					if (link.GetAttribute("className") != "questionflagsaveform") continue;
-					found = link.Children[0];
+					found = link.Children[0].Children;
 					break;
 				}
 
-				foreach (HtmlElement link in found.Children)
+				foreach (HtmlElement link in found)
 				{
 					if (link.Id == null) continue;
 
 					string taskId = Utils.GetId(link.Id);
-					string className = link.GetAttribute("className");
+					string taskType = link.GetAttribute("className");
 
-					if (Utils.Match(className, "que match deferredfeedback"))
+					if (Utils.Match(taskType, "que match deferredfeedback"))
 					{
 						List<string> answers;
+
+						var childs = link.Children[1].Children[0].Children;
 
 						string text;
 
 						int count;
 
-						var childs = link.Children[1].Children[0].Children;
-
 						if (childs.Count > 3)
 						{
-							count = link.Children[1].Children[0].Children[3].Children[0].Children[0].Children.Count;
+							count = childs[3].Children[0].Children[0].Children.Count;
 						}
 						else
 						{
-							count = link.Children[1].Children[0].Children[1].Children[2].Children[0].Children[0].Children.Count;
+							count = childs[1].Children[2].Children[0].Children[0].Children.Count;
 						}
 
 						childs = link.Children[1].Children[1].Children[1].Children;
@@ -223,13 +223,11 @@ namespace ExamSolver
 
 						if (answers.Count != count)
 						{
-							answers.Clear();
 							answers = text.Split(new string[] { ", \r\n\r\n" }, StringSplitOptions.None).ToList();
 						}
 
 						if (answers.Count != count)
 						{
-							answers.Clear();
 							answers = text.Split(',').ToList();
 
 							for (int i = 1; i < answers.Count; i++)
@@ -243,7 +241,6 @@ namespace ExamSolver
 
 						if (answers.Count != count)
 						{
-							answers.Clear();
 							answers = text.Split(',').ToList();
 
 							for (int i = 1; i < answers.Count; i++)
@@ -264,21 +261,21 @@ namespace ExamSolver
 
 						course.Put(comboBox2.Text, comboBox3.Text, taskId, _answers);
 					}
-					else if (Utils.Match(className, "que multianswer deferredfeedback"))
+					else if (Utils.Match(taskType, "que multianswer deferredfeedback"))
 					{
-						var child = link.Children[1].Children[0];
+						var answers = new Dictionary<string, string>();
 
-						var _answers = new Dictionary<string, string>();
-
-						HtmlElementCollection _childs = child.GetElementsByTagName("span");
+						var root = link.Children[1].Children[0];
 
 						int count = 0;
 
-						foreach (HtmlElement __child in _childs)
-						{
-							if (!Utils.Match(__child.GetAttribute("className"), "subquestion")) continue;
+						HtmlElementCollection childs = root.GetElementsByTagName("span");
 
-							string answer = __child.Children[3].InnerText;
+						foreach (HtmlElement child in childs)
+						{
+							if (!Utils.Match(child.GetAttribute("className"), "subquestion")) continue;
+
+							string answer = child.Children[3].InnerText;
 
 							int startIdx = answer.IndexOf("Правильный ответ") + 18;
 							int endIdx = answer.IndexOf("Баллов") - 2;
@@ -287,28 +284,29 @@ namespace ExamSolver
 
 							if (startIdx > endIdx) break;
 
-							_answers.Add(count.ToString(), answer.Substring(startIdx, endIdx - startIdx));
+							answers.Add(count.ToString(), answer.Substring(startIdx, endIdx - startIdx));
 							count++;
 						}
 
-						_childs = child.GetElementsByTagName("div");
+						childs = root.GetElementsByTagName("div");
 
-						foreach (HtmlElement __child in _childs)
+						foreach (HtmlElement child in childs)
 						{
-							if (__child.GetAttribute("className") != "outcome") continue;
+							if (child.GetAttribute("className") != "outcome") continue;
 
-							string text = __child.InnerText;
+							string answer = child.InnerText;
 
-							int pos = text.IndexOf("Правильный ответ") + 18;
+							int startIdx = answer.IndexOf("Правильный ответ") + 18;
 
-							_answers.Add(count.ToString(), __child.InnerText.Substring(pos));
+							answers.Add(count.ToString(), answer.Substring(startIdx));
 							count++;
 						}
-						course.Put(comboBox2.Text, comboBox3.Text, taskId, _answers);
+						course.Put(comboBox2.Text, comboBox3.Text, taskId, answers);
 					}
-					else if (Utils.Match(className, "que ddwtos deferredfeedback"))
+					else if (Utils.Match(taskType, "que ddwtos deferredfeedback")
+						|| Utils.Match(taskType, "que gapselect deferredfeedback"))
 					{
-						var _answers = new Dictionary<string, string>();
+						var answers = new Dictionary<string, string>();
 
 						var childs = link.Children[1].Children[1].Children[1].Children;
 
@@ -328,37 +326,11 @@ namespace ExamSolver
 
 						for (int i = 0; i < matches.Count; i++)
 						{
-							_answers.Add(i.ToString(), matches[i].Groups[1].Value.Trim());
+							answers.Add(i.ToString(), matches[i].Groups[1].Value.Trim());
 						}
-						course.Put(comboBox2.Text, comboBox3.Text, taskId, _answers);
+						course.Put(comboBox2.Text, comboBox3.Text, taskId, answers);
 					}
-					else if (Utils.Match(className, "que gapselect deferredfeedback"))
-					{
-						var _answers = new Dictionary<string, string>();
-
-						var childs = link.Children[1].Children[1].Children[1].Children;
-
-						string text;
-
-						if (childs.Count > 2)
-						{
-							text = childs[2].InnerText;
-						}
-						else if (childs.Count > 1)
-						{
-							text = childs[1].InnerText;
-						}
-						else continue;
-
-						var answers = Regex.Matches(text, @"\[(.+?)\]");
-
-						for (int i = 0; i < answers.Count; i++)
-						{
-							_answers.Add(i.ToString(), answers[i].Groups[1].Value);
-						}
-						course.Put(comboBox2.Text, comboBox3.Text, taskId, _answers);
-					}
-					else if (Utils.Match(className, "que multichoice deferredfeedback"))
+					else if (Utils.Match(taskType, "que multichoice deferredfeedback"))
 					{
 						var _answers = new Dictionary<string, string>();
 
@@ -368,11 +340,11 @@ namespace ExamSolver
 
 						if (childs.Count > 2)
 						{
-							answers = childs[2].InnerText.Substring(19).Split(new string[] { ", " }, StringSplitOptions.None);
+							answers = childs[2].InnerText.Substring(19).Split(',');
 						}
 						else if (childs.Count > 1)
 						{
-							answers = childs[1].InnerText.Substring(19).Split(new string[] { ", " }, StringSplitOptions.None);
+							answers = childs[1].InnerText.Substring(19).Split(',');
 						}
 						else continue;
 
@@ -425,7 +397,7 @@ namespace ExamSolver
 				HtmlElement task = found.Children[0];
 
 				string taskId = Utils.GetId(task.Id);
-				string className = task.GetAttribute("className");
+				string taskType = task.GetAttribute("className");
 
 				if (checkBox1.Checked && !firstTime)
 				{
@@ -433,7 +405,7 @@ namespace ExamSolver
 					firstTime = true;
 				}
 
-				if (Utils.Match(className, "que match deferredfeedback"))
+				if (Utils.Match(taskType, "que match deferredfeedback"))
 				{
 					var childs = task.Children[1].Children[0].Children[3].Children[0].Children[0].Children;
 
@@ -466,30 +438,31 @@ namespace ExamSolver
 						{
 							if (!Utils.Match(option.InnerText, answer)) continue;
 							option.SetAttribute("selected", "selected");
+							break;
 						}
 					}
 				}
-				else if (Utils.Match(className, "que multianswer deferredfeedback"))
+				else if (Utils.Match(taskType, "que multianswer deferredfeedback"))
 				{
-					var child = task.Children[1].Children[0];
-
 					string[] answers = course.Sections[comboBox2.Text][comboBox3.Text][taskId].OrderBy(x => int.Parse(x.Key)).Select(x => x.Value).ToArray();
 
-					HtmlElementCollection _childs = child.GetElementsByTagName("span");
+					var root = task.Children[1].Children[0];
 
 					int count = 0;
 
-					foreach (HtmlElement __child in _childs)
+					HtmlElementCollection childs = root.GetElementsByTagName("span");
+
+					foreach (HtmlElement child in childs)
 					{
-						string _className = __child.GetAttribute("className");
-						if (_className == "subquestion form-inline d-inline")
+						string keyType = child.GetAttribute("className");
+						if (keyType == "subquestion form-inline d-inline")
 						{
-							__child.Children[1].SetAttribute("value", answers[count]);
+							child.Children[1].SetAttribute("value", answers[count]);
 							count++;
 						}
-						else if (_className == "subquestion")
+						else if (keyType == "subquestion")
 						{
-							var options = __child.Children[1].Children;
+							var options = child.Children[1].Children;
 
 							foreach (HtmlElement option in options)
 							{
@@ -501,13 +474,13 @@ namespace ExamSolver
 						}
 					}
 
-					_childs = child.All;
+					childs = root.All;
 
-					foreach (HtmlElement __childs in _childs)
+					foreach (HtmlElement child in childs)
 					{
-						if (__childs.GetAttribute("className") != "answer") continue;
+						if (child.GetAttribute("className") != "answer") continue;
 
-						var options = __childs.Children.Count > 1 ? __childs.Children : __childs.Children[0].Children[0].Children;
+						var options = child.Children.Count > 1 ? child.Children : child.Children[0].Children[0].Children;
 
 						foreach (HtmlElement option in options)
 						{
@@ -518,46 +491,45 @@ namespace ExamSolver
 						}
 					}
 				}
-				else if (Utils.Match(className, "que ddwtos deferredfeedback"))
+				else if (Utils.Match(taskType, "que ddwtos deferredfeedback"))
 				{
 					string[] answers = course.Sections[comboBox2.Text][comboBox3.Text][taskId].OrderBy(x => int.Parse(x.Key)).Select(x => x.Value).ToArray();
 
 					var fields = task.Children[1].Children[0];
-					var child = fields.Children[3];
+					var root = fields.Children[3];
 
-					int count = child.Children.Count;
+					int count = root.Children.Count;
 
 					Dictionary<string, string>[] cards = new Dictionary<string, string>[count];
 
 					for (int i = 0; i < count; i++)
 					{
 						cards[i] = new Dictionary<string, string>();
-						for (int q = 0; q < child.Children[i].Children.Count; q++)
+						for (int q = 0; q < root.Children[i].Children.Count; q++)
 						{
-							cards[i].Add(child.Children[i].Children[q].InnerText.Trim(), (q + 1).ToString());
+							cards[i].Add(root.Children[i].Children[q].InnerText.Trim(), (q + 1).ToString());
 						}
 					}
-
 					for (int i = 4; i < fields.Children.Count; i++)
 					{
 						fields.Children[i].SetAttribute("value", cards[i % count][answers[i - 4]]);
 					}
 				}
-				else if (Utils.Match(className, "que gapselect deferredfeedback"))
+				else if (Utils.Match(taskType, "que gapselect deferredfeedback"))
 				{
 					string[] answers = course.Sections[comboBox2.Text][comboBox3.Text][taskId].OrderBy(x => int.Parse(x.Key)).Select(x => x.Value).Select(x => x.Replace('‑', '-')).ToArray();
 
-					var child = task.Children[1].Children[0].Children[2];
-
-					HtmlElementCollection _childs = child.GetElementsByTagName("span");
+					var root = task.Children[1].Children[0].Children[2];
 
 					int count = 0;
 
-					foreach (HtmlElement __child in _childs)
-					{
-						if (__child.GetAttribute("className") != "control group1") continue;
+					HtmlElementCollection childs = root.GetElementsByTagName("span");
 
-						var options = __child.Children[0].Children;
+					foreach (HtmlElement child in childs)
+					{
+						if (child.GetAttribute("className") != "control group1") continue;
+
+						var options = child.Children[0].Children;
 
 						foreach (HtmlElement option in options)
 						{
@@ -568,25 +540,25 @@ namespace ExamSolver
 						}
 					}
 				}
-				else if (Utils.Match(className, "que multichoice deferredfeedback"))
+				else if (Utils.Match(taskType, "que multichoice deferredfeedback"))
 				{
 					string[] answers = course.Sections[comboBox2.Text][comboBox3.Text][taskId].Select(x => x.Value).ToArray();
 
-					var gap = task.Children[1].Children[0].Children[3].Children[1];
+					var childs = task.Children[1].Children[0].Children[3].Children[1].Children;
 
-					foreach (HtmlElement child in gap.Children)
+					foreach (HtmlElement child in childs)
 					{
 						if (!answers.Contains(child.Children[2].Children[0].Children[0].InnerText)) continue;
 						child.Children[1].SetAttribute("checked", "checked");
 					}
 				}
-				if (found.Children[1].Children.Count < 2) found.Children[1].Children[0].InvokeMember("click");
-				else found.Children[1].Children[1].InvokeMember("click");
+				if (found.Children[1].Children.Count > 1) found.Children[1].Children[1].InvokeMember("click");
+				else found.Children[1].Children[0].InvokeMember("click");
 			}
 			else if (Utils.Match(url, "https://exam1.urfu.ru/mod/quiz/summary.php"))
 			{
-				HtmlElement el = webBrowser1.Document.GetElementById("region-main");
-				string text = el.InnerText;
+				string text = webBrowser1.Document.GetElementById("region-main").InnerText;
+
 				if (!text.Contains("Пока нет ответа") && !text.Contains("Неполный ответ"))
 				{
 					HtmlElementCollection links = webBrowser1.Document.GetElementsByTagName("button");
