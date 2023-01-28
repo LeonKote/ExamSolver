@@ -67,6 +67,7 @@ namespace ExamSolver
 					comboBox1.SelectedIndex = 0;
 					comboBox2.SelectedIndex = 0;
 					comboBox3.SelectedIndex = 0;
+					numericUpDown1.Value = 1;
 				}
 				else
 				{
@@ -188,15 +189,26 @@ namespace ExamSolver
 
 						string text;
 
-						var childs = link.Children[1].Children[1].Children[1].Children;
+						int count;
 
-						int count = link.Children[1].Children[0].Children[3].Children[0].Children[0].Children.Count;
+						var childs = link.Children[1].Children[0].Children;
 
-						if (childs.Count > 2 && childs[2].GetAttribute("className") == "rightanswer")
+						if (childs.Count > 3)
+						{
+							count = link.Children[1].Children[0].Children[3].Children[0].Children[0].Children.Count;
+						}
+						else
+						{
+							count = link.Children[1].Children[0].Children[1].Children[2].Children[0].Children[0].Children.Count;
+						}
+
+						childs = link.Children[1].Children[1].Children[1].Children;
+
+						if (childs.Count > 2)
 						{
 							text = childs[2].InnerText.Substring(18);
 						}
-						else if (childs.Count > 1 && childs[1].GetAttribute("className") == "rightanswer")
+						else if (childs.Count > 1)
 						{
 							text = childs[1].InnerText.Substring(18);
 						}
@@ -207,6 +219,12 @@ namespace ExamSolver
 						if (answers.Count != count)
 						{
 							answers = Regex.Split(text, @", (?=\d+\.)").ToList();
+						}
+
+						if (answers.Count != count)
+						{
+							answers.Clear();
+							answers = text.Split(new string[] { ", \r\n\r\n" }, StringSplitOptions.None).ToList();
 						}
 
 						if (answers.Count != count)
@@ -226,8 +244,15 @@ namespace ExamSolver
 						if (answers.Count != count)
 						{
 							answers.Clear();
-							text = text.Substring(2);
-							answers = text.Split(new string[] { "\r\n\r\n" }, StringSplitOptions.None).ToList();
+							answers = text.Split(',').ToList();
+
+							for (int i = 1; i < answers.Count; i++)
+							{
+								if (answers[i - 1].Contains("→")) continue;
+								answers[i - 1] += "," + answers[i];
+								answers.RemoveAt(i);
+								i--;
+							}
 						}
 
 						if (answers.Count != count)
@@ -265,12 +290,18 @@ namespace ExamSolver
 							_answers.Add(count.ToString(), answer.Substring(startIdx, endIdx - startIdx));
 							count++;
 						}
-						for (int i = 0; i < child.Children.Count; i++)
-						{
-							if (child.Children[i].TagName != "DIV" ||
-								child.Children[i].GetAttribute("className") != "answer") continue;
 
-							_answers.Add(count.ToString(), child.Children[i + 1].InnerText.Substring(42));
+						_childs = child.GetElementsByTagName("div");
+
+						foreach (HtmlElement __child in _childs)
+						{
+							if (__child.GetAttribute("className") != "outcome") continue;
+
+							string text = __child.InnerText;
+
+							int pos = text.IndexOf("Правильный ответ") + 18;
+
+							_answers.Add(count.ToString(), __child.InnerText.Substring(pos));
 							count++;
 						}
 						course.Put(comboBox2.Text, comboBox3.Text, taskId, _answers);
@@ -279,7 +310,19 @@ namespace ExamSolver
 					{
 						var _answers = new Dictionary<string, string>();
 
-						string text = link.Children[1].Children[1].Children[1].Children[1].InnerText;
+						var childs = link.Children[1].Children[1].Children[1].Children;
+
+						string text;
+
+						if (childs.Count > 2)
+						{
+							text = childs[2].InnerText;
+						}
+						else if (childs.Count > 1)
+						{
+							text = childs[1].InnerText;
+						}
+						else continue;
 
 						var matches = Regex.Matches(text, @"\[(.+?)\]");
 
@@ -293,7 +336,19 @@ namespace ExamSolver
 					{
 						var _answers = new Dictionary<string, string>();
 
-						string text = link.Children[1].Children[1].Children[1].Children[1].InnerText;
+						var childs = link.Children[1].Children[1].Children[1].Children;
+
+						string text;
+
+						if (childs.Count > 2)
+						{
+							text = childs[2].InnerText;
+						}
+						else if (childs.Count > 1)
+						{
+							text = childs[1].InnerText;
+						}
+						else continue;
 
 						var answers = Regex.Matches(text, @"\[(.+?)\]");
 
@@ -307,11 +362,23 @@ namespace ExamSolver
 					{
 						var _answers = new Dictionary<string, string>();
 
-						string[] answers = link.Children[1].Children[1].Children[1].Children[1].InnerText.Substring(19).Split(new string[] { ", " }, StringSplitOptions.None);
+						var childs = link.Children[1].Children[1].Children[1].Children;
+
+						string[] answers;
+
+						if (childs.Count > 2)
+						{
+							answers = childs[2].InnerText.Substring(19).Split(new string[] { ", " }, StringSplitOptions.None);
+						}
+						else if (childs.Count > 1)
+						{
+							answers = childs[1].InnerText.Substring(19).Split(new string[] { ", " }, StringSplitOptions.None);
+						}
+						else continue;
 
 						for (int i = 0; i < answers.Length; i++)
 						{
-							_answers.Add(i.ToString(), answers[i]);
+							_answers.Add(i.ToString(), answers[i].Trim());
 						}
 						course.Put(comboBox2.Text, comboBox3.Text, taskId, _answers);
 					}
@@ -433,12 +500,14 @@ namespace ExamSolver
 							}
 						}
 					}
-					for (int i = 0; i < child.Children.Count; i++)
-					{
-						if (child.Children[i].TagName != "DIV" ||
-							child.Children[i].GetAttribute("className") != "answer") continue;
 
-						var options = child.Children[i].Children;
+					_childs = child.All;
+
+					foreach (HtmlElement __childs in _childs)
+					{
+						if (__childs.GetAttribute("className") != "answer") continue;
+
+						var options = __childs.Children.Count > 1 ? __childs.Children : __childs.Children[0].Children[0].Children;
 
 						foreach (HtmlElement option in options)
 						{
@@ -630,6 +699,8 @@ namespace ExamSolver
 
 		private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
 		{
+			if (!comboBox3.Enabled) return;
+
 			if (comboBox3.SelectedIndex == 0)
 			{
 				button1.Enabled = false;
