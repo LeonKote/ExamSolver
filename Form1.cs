@@ -436,7 +436,7 @@ namespace ExamSolver
 
 						foreach (HtmlElement option in options)
 						{
-							if (!Utils.Match(option.InnerText, answer)) continue;
+							if (!Utils.MatchAnswer(option.InnerText, answer)) continue;
 							option.SetAttribute("selected", "selected");
 							break;
 						}
